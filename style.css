@@ -1,0 +1,14 @@
+form{
+    /* width: auto;
+    margin: 100px auto; */
+    max-width: 600px !important;
+}
+
+#nom,
+#telephone {
+    margin-left: 50px;
+}
+
+input{
+    width: 100px;
+}
