@@ -1,35 +1,172 @@
+// COMPASANT PARENT
 class App extends React.Component {
-    render () {
-        return(
-            <div className="container">
-                <h1 className="text-center fs-6 mt-5">Jeemacoder Gestion utilisateurs</h1>
-                <form id="form" className="shadow p-3 mx-auto w-50">
-                    <div className="mb-3 d-sm-flex from-group">
-                    <div className="">
-                        <label for="prenom" id="prenom" className="from-label">Prenom</label>
-                        <input required type="text" class="form-control" id="prenom" aria-describedby="name" />                    </div>
+    // initialisez l'état initial du composant
+    constructor(props) {
+      super(props);
+      this.state = {
+        tasks: [],
+        prenom: '',
+        nom: '',
+        email:'',
+        phone:'', 
+        editIndex: null
+      };
+    }
+    
 
-                    <div className="">
-                        <label for="nom" id="nom" className="from-label">nom</label>
-                        <input required type="text" class="form-control" id="nom" aria-describedby="name" />                    </div>
-                    </div>
+    addTask = () => {
+      const { prenom, nom, email, phone, tasks, editIndex } = this.state;
+    
+      const newTask = {
+        id: Math.floor(Math.random() * 10000),
+        prenom,
+        nom,
+        email,
+        phone,
+      };
+    
+      if (editIndex !== null) {
+        const newUser = this.state.tasks.map((user))
+        // Si editIndex est défini, mettez à jour la tâche existante
+        const updatedTasks = [...tasks];
+        // updatedTasks= newTask;
+    
+        this.setState({
+          tasks: updatedTasks,
+          prenom: '',
+          nom: '',
+          email: '',
+          phone: '',
+          editIndex: null, // Réinitialisez editIndex après l'édition
+        });
+      } else {
+        // Sinon, ajoutez une nouvelle tâche
+        this.setState((prev) => ({
+          tasks: [...prev.tasks, newTask],
+          prenom: '',
+          nom: '',
+          email: '',
+          phone: '',
+        }));
+        }
+      }
+   
+    
+    
 
-                    <div className="mb-3 d-sm-flex from-group">
-                    <div className="">
-                        <label for="email" id="email" className="from-label">Email</label>
-                        <input required type="email" class="form-control" id="email" aria-describedby="name" />                    </div>
+    handleChangePrenom = (e) => {
+      this.setState({prenom: e.target.value});
 
-                    <div className="">
-                        <label for="telephone" id="telephone" className="from-label">telephone</label>
-                        <input required type="tel" class="form-control" id="telephone" aria-describedby="name" />                    </div>
-                    </div>
-                </form>
+    }
 
-                <hr className="w-100 mt-4"/>
+    handleChangeNom = (e) => {
+      this.setState({nom: e.target.value});
+    }
 
-                <h1 className="text-center fs-6">Utilisateurs</h1>
-                <div className="container">
-                <table class="table">
+    handleChangeEmail = (e) => {
+      this.setState({email: e.target.value});
+    }
+
+    handleChangePhone = (e) => {
+      this.setState({phone: e.target.value});
+    }
+  
+    // pour supprimer une tâche
+    removeTask = (index) => {
+      const { tasks } = this.state;
+      const updatedTasks = [...tasks];
+      updatedTasks.splice(index, 1);
+      this.setState({
+        tasks: updatedTasks,
+      });
+    };
+
+    editTask = (index) => {
+      const { tasks } = this.state;
+      const editTasks = tasks[index];
+      console.log("edit", editTasks);
+      this.setState({
+        prenom: editTasks.prenom,
+        nom: editTasks.nom,
+        email: editTasks.email,
+        phone: editTasks.phone,
+      });
+    }
+  
+    render() {
+      console.log(this.state.tasks);
+      const {  prenom, nom, email, phone } = this.state;
+      return (
+        <div className="App  text-center">       
+          <h1>Jeemacoder-React</h1>
+          <div className="container row mx-auto">
+            <div className="col-md-6">
+            <InputTodo type="text" name="prenom"  value={this.state.prenom}  onChange={this.handleChangePrenom} />
+
+            </div>
+
+            <div className="col-md-6">
+            <InputTodo type="text" name="nom" value={this.state.nom}  onChange={this.handleChangeNom} />
+
+            </div>
+
+            <div className="col-md-6">
+            <InputTodo type="email" name="email" value={this.state.email} onChange={this.handleChangeEmail} />
+
+            </div>
+
+            <div className="col-md-6">
+
+            <InputTodo type="tel" name="phone" value={this.state.phone}  onChange={this.handleChangePhone} />
+            </div>
+            
+              <Button 
+                className="mt-5 w-100"
+                onClick={this.addTask} 
+                titre='Ajouter' 
+                />
+           
+          </div>
+          
+          <Mytable tasks={this.state.tasks}  removeTask={this.removeTask} editTask={this.editTask}/>
+        </div>
+       
+      );
+    }
+  };
+
+  class InputTodo extends React.Component {
+    render() {
+      const {type, value, name, onChange, children} = this.props
+     return <div className='mx-auto w-100 '>
+             <label htmlFor=
+             {name}>{children}
+             </label>
+             <input type={type} 
+             value={value} onChange={onChange} id={name} name={name} className='form-control'/>  
+         </div>  
+ }
+  }
+  
+  class Button extends React.Component{
+    render() {
+      return (
+        <button className="btn btn-danger mt-4" onClick={this.props.onClick}>{this.props.titre}</button>
+        )
+    }
+  }
+
+  class Mytable extends React.Component{
+    constructor(props){
+        super(props);
+    }
+
+    render() {
+      return (
+        <div className="container mt-4">
+            <hr/>
+                    <h1 className="text-center fs-6">Utilisateurs</h1>
+                <table className="table table-responsive">
                     <thead>
                         <tr>
                         <th scope="col">Prenom</th>
@@ -39,13 +176,46 @@ class App extends React.Component {
                         <th scope="col">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    </tbody>
+                    <Tablebody tasks={this.props.tasks} removeTask={this.props.removeTask} editTask={this.props.editTask}/>
                     </table>
                 </div>
-            </div>
-        )
+           
+      )
     }
-}
+  }
 
-ReactDOM.render(<App/>, document.getElementById('container'))
+  class Tablebody extends React.Component {
+    constructor(props){
+        super(props);
+    }
+        render (){
+            return (
+              <tbody>
+                {this.props.tasks.map((item, index)=> (
+                  <tr key={item.id}>
+                    <td>{item.prenom}</td>
+                    <td>{item.nom}</td>
+                    <td>{item.email}</td>
+                    <td>{item.phone}</td>
+                    <td>
+                      <button className="btn btn-danger" onClick={() => this.props.removeTask(index)}>Supprimer</button>
+                      <button className="btn btn-warning" onClick={() => this.props.editTask(index)}>modifier</button>
+                      </td>
+                  </tr>
+                  
+                ))}
+              </tbody>
+            )
+               
+            
+        }
+  }
+  
+
+  
+ 
+  
+  ReactDOM.render(<App />, document.getElementById('container'));
+  
+  
+  
